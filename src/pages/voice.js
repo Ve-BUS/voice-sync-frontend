@@ -55,7 +55,7 @@ const Dashboard = () =>
   //Handle Speech Recognition
   const handleSummary = async () =>
   {
-    const data = await axios.post(`${process.env.NEXT_PUBLIC_ML_URL}/process_text`, {
+    const data = await axios.post(`https://60b2-2401-4900-57c6-954c-5d87-29c3-a162-65f7.ngrok-free.app/process_text`, {
       text: transcript,
     });
     if (data?.data?.processed_text)
