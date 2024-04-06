@@ -1,5 +1,6 @@
 // import { useState } from 'react'
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import "regenerator-runtime/runtime";
 import SpeechRecognition, {
   useSpeechRecognition,
@@ -12,18 +13,28 @@ import { FaCheckCircle } from "react-icons/fa";
 import { SiConvertio } from "react-icons/si";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import axios from "axios";
+import { user } from "@nextui-org/react";
+import { content } from "@/tailwind.config";
+import { UserAuth } from "../utils/auth";
 
-const Dashboard = () => {
+const Dashboard = () =>
+{
+  const router = useRouter();
   const [copyTxt, setCopyTxt] = useState();
   const [isCopied, setCopied] = useClipboard(copyTxt);
 
+  const { user } = UserAuth();
+  console.log(user);
   const [listening, setListening] = useState(false);
 
-  const startListening = () => {
+  const startListening = () =>
+  {
     SpeechRecognition.startListening({ continuous: true, language: "en-In" });
     setListening(true);
   };
-  const stopListening = () => {
+  const stopListening = () =>
+  {
     SpeechRecognition.stopListening();
     setListening(false);
   };
@@ -31,7 +42,8 @@ const Dashboard = () => {
   const { transcript, browserSupportsSpeechRecognition } =
     useSpeechRecognition();
 
-  useEffect(() => {
+  useEffect(() =>
+  {
     console.log("first");
     console.log(transcript);
   }, [transcript]);
@@ -41,7 +53,28 @@ const Dashboard = () => {
   //   }
 
   //Handle Speech Recognition
-  const handleSummary = () => {
+  const handleSummary = async () =>
+  {
+    const data = await axios.post(`${process.env.NEXT_PUBLIC_ML_URL}/process_text`, {
+      text: transcript,
+    });
+    if (data?.data?.processed_text)
+    {
+      const note = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/voice-sync/add-note`, {
+        user_id: user.id,
+        content: data?.data?.processed_text,
+      }).then((res) =>
+      {
+        if (res.status === 201)
+        {
+          alert("Note added successfully");
+          router.push(res?.data?.url);
+        }
+      });
+    }
+
+
+
     //
   };
 
@@ -79,8 +112,8 @@ const Dashboard = () => {
             <BsFillMicFill />
             {
               /* if listning show listening */ console.log(
-                SpeechRecognition.listening
-              )
+              SpeechRecognition.listening
+            )
             }
             {listening ? "Listening.." : "Start"}
           </button>
@@ -104,7 +137,7 @@ const Dashboard = () => {
             className="flex items-center justify-center py-1.5 px-3 gap-x-2 bg-purple-500 shadow-md shadow-purple-100 text-white rounded-xl active:bg-purple-700"
           >
             <FaCheckCircle />
-            Get Summary
+            Generate MOM
           </button>
         </div>
       </div>

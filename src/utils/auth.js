@@ -131,7 +131,7 @@ const useAuth = () =>
         // localStorage.setItem("session", JSON.stringify(session));
         localStorage.setItem("user", JSON.stringify(res.data.user));
         setUser(res.data.user);
-        router.push("/dashboard");
+        router.push("/voice");
 
 
 
