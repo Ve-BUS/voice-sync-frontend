@@ -61,11 +61,7 @@ const Dashboard = () =>
         processed_text: "This is an example text which will be generated as a summary. From the model. We have paused the model for now. For full demo please contact us. Thank you",
       },
     };
-
-
-
-
-
+    setSummary(data.data.processed_text);
     //
   };
 
@@ -89,7 +85,7 @@ const Dashboard = () =>
             onClick={() => setCopyTxt(transcript)}
           >
             <div className="w-full min-h-[100%] border-2 flex-1 border-dashed border-purple-400 rounded-xl p-4">
-              Text: {summary.length ? summary : transcript}
+              Text: {summary?.length ? summary : transcript}
             </div>
           </div>
         </div>
