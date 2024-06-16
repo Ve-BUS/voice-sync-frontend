@@ -23,6 +23,7 @@ const Dashboard = () =>
   const router = useRouter();
   const [copyTxt, setCopyTxt] = useState();
   const [isCopied, setCopied] = useClipboard(copyTxt);
+  const [summary, setSummary] = useState();
 
   const { user } = UserAuth();
   console.log(user);
@@ -55,23 +56,13 @@ const Dashboard = () =>
   //Handle Speech Recognition
   const handleSummary = async () =>
   {
-    const data = await axios.post(`https://60b2-2401-4900-57c6-954c-5d87-29c3-a162-65f7.ngrok-free.app/process_text`, {
-      text: transcript,
-    });
-    if (data?.data?.processed_text)
-    {
-      const note = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/voice-sync/add-note`, {
-        user_id: user.id,
-        content: data?.data?.processed_text,
-      }).then((res) =>
-      {
-        if (res.status === 201)
-        {
-          alert("Note added successfully");
-          router.push(res?.data?.url);
-        }
-      });
-    }
+    const data = {
+      data: {
+        processed_text: "This is an example text which will be generated as a summary. From the model. We have paused the model for now. For full demo please contact us. Thank you",
+      },
+    };
+
+
 
 
 
@@ -98,7 +89,7 @@ const Dashboard = () =>
             onClick={() => setCopyTxt(transcript)}
           >
             <div className="w-full min-h-[100%] border-2 flex-1 border-dashed border-purple-400 rounded-xl p-4">
-              Text: {transcript}
+              Text: {summary.length ? summary : transcript}
             </div>
           </div>
         </div>
